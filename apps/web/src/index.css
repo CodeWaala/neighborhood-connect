@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+    :root {
+        /* Warm cream background */
+        --background: 45 30% 97%;
+        --foreground: 25 25% 20%;
+
+        /* Soft card surfaces */
+        --card: 45 40% 99%;
+        --card-foreground: 25 25% 20%;
+
+        --popover: 45 40% 99%;
+        --popover-foreground: 25 25% 20%;
+
+        /* Sage green - trust, calm, nature */
+        --primary: 150 30% 45%;
+        --primary-foreground: 45 30% 98%;
+        --primary-soft: 150 25% 92%;
+        --primary-glow: 150 35% 55%;
+
+        /* Warm neutral secondary */
+        --secondary: 30 20% 94%;
+        --secondary-foreground: 25 25% 25%;
+
+        /* Muted tones */
+        --muted: 30 15% 92%;
+        --muted-foreground: 25 15% 50%;
+
+        /* Warm coral accent - friendly, approachable */
+        --accent: 15 80% 65%;
+        --accent-foreground: 45 30% 98%;
+        --accent-soft: 15 60% 94%;
+
+        /* System colors */
+        --destructive: 0 65% 55%;
+        --destructive-foreground: 45 30% 98%;
+
+        --border: 30 20% 88%;
+        --input: 30 20% 88%;
+        --ring: 150 30% 45%;
+
+        --radius: 1rem;
+
+        /* Custom design tokens */
+        --shadow-soft: 0 4px 20px -4px hsl(25 25% 20% / 0.08);
+        --shadow-card: 0 8px 30px -8px hsl(25 25% 20% / 0.1);
+        --shadow-elevated: 0 12px 40px -12px hsl(25 25% 20% / 0.15);
+
+        /* Gradients */
+        --gradient-hero: linear-gradient(135deg, hsl(150 25% 92%) 0%, hsl(45 40% 99%) 50%, hsl(15 60% 96%) 100%);
+        --gradient-warm: linear-gradient(180deg, hsl(45 40% 99%) 0%, hsl(30 20% 96%) 100%);
+        --gradient-primary: linear-gradient(135deg, hsl(150 30% 45%) 0%, hsl(150 35% 55%) 100%);
+
+        --sidebar-background: 45 30% 97%;
+        --sidebar-foreground: 25 25% 20%;
+        --sidebar-primary: 150 30% 45%;
+        --sidebar-primary-foreground: 45 30% 98%;
+        --sidebar-accent: 30 20% 94%;
+        --sidebar-accent-foreground: 25 25% 25%;
+        --sidebar-border: 30 20% 88%;
+        --sidebar-ring: 150 30% 45%;
+    }
+
+    .dark {
+        --background: 25 20% 10%;
+        --foreground: 45 20% 95%;
+
+        --card: 25 18% 14%;
+        --card-foreground: 45 20% 95%;
+
+        --popover: 25 18% 14%;
+        --popover-foreground: 45 20% 95%;
+
+        --primary: 150 35% 55%;
+        --primary-foreground: 25 20% 10%;
+        --primary-soft: 150 20% 20%;
+        --primary-glow: 150 40% 65%;
+
+        --secondary: 25 15% 20%;
+        --secondary-foreground: 45 20% 95%;
+
+        --muted: 25 15% 18%;
+        --muted-foreground: 30 10% 60%;
+
+        --accent: 15 70% 60%;
+        --accent-foreground: 25 20% 10%;
+        --accent-soft: 15 30% 20%;
+
+        --destructive: 0 55% 45%;
+        --destructive-foreground: 45 20% 95%;
+
+        --border: 25 15% 22%;
+        --input: 25 15% 22%;
+        --ring: 150 35% 55%;
+
+        --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+        --shadow-card: 0 8px 30px -8px hsl(0 0% 0% / 0.4);
+        --shadow-elevated: 0 12px 40px -12px hsl(0 0% 0% / 0.5);
+
+        --gradient-hero: linear-gradient(135deg, hsl(25 18% 12%) 0%, hsl(25 18% 14%) 50%, hsl(25 15% 16%) 100%);
+        --gradient-warm: linear-gradient(180deg, hsl(25 18% 14%) 0%, hsl(25 15% 12%) 100%);
+        --gradient-primary: linear-gradient(135deg, hsl(150 35% 50%) 0%, hsl(150 40% 60%) 100%);
+
+        --sidebar-background: 25 20% 10%;
+        --sidebar-foreground: 45 20% 95%;
+        --sidebar-primary: 150 35% 55%;
+        --sidebar-primary-foreground: 25 20% 10%;
+        --sidebar-accent: 25 15% 20%;
+        --sidebar-accent-foreground: 45 20% 95%;
+        --sidebar-border: 25 15% 22%;
+        --sidebar-ring: 150 35% 55%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold tracking-tight;
+    }
+}
+
+@layer utilities {
+    .shadow-soft {
+        box-shadow: var(--shadow-soft);
+    }
+
+    .shadow-card {
+        box-shadow: var(--shadow-card);
+    }
+
+    .shadow-elevated {
+        box-shadow: var(--shadow-elevated);
+    }
+
+    .bg-hero-gradient {
+        background: var(--gradient-hero);
+    }
+
+    .bg-warm-gradient {
+        background: var(--gradient-warm);
+    }
+
+    .bg-primary-gradient {
+        background: var(--gradient-primary);
+    }
+
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+@layer components {
+    .card-neighbor {
+        @apply bg-card rounded-2xl shadow-card p-5 border border-border/50 transition-all duration-300;
+    }
+
+    .card-neighbor:hover {
+        @apply shadow-elevated -translate-y-1;
+    }
+
+    .badge-interest {
+        @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-primary-soft text-primary;
+    }
+
+    .badge-availability {
+        @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-accent-soft text-accent;
+    }
+}
