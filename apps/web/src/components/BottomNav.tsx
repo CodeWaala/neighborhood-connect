@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Compass, Users, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { listConnections } from "@/api/connections";
+import { listConnections } from "@neighborhood-connect/api-client";
 
 // Routes where the bottom nav should NOT appear
 const HIDDEN_ROUTES = ["/", "/dev-login", "/onboarding", "/connection-sent"];

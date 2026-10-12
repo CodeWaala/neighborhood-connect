@@ -1,13 +1,28 @@
 /**
  * API Client — typed HTTP wrapper for the NestJS backend.
  *
+ * Shared by the web and mobile apps. Each app calls `configureApiClient` once at
+ * startup to supply the base URL and what to do on a 401; nothing here reads
+ * platform globals (`import.meta.env`, `localStorage`, `window`).
+ *
  * Uses the `x-user-id` header for dev authentication.
- * Will switch to `Authorization: Bearer <jwt>` when Cognito is wired (Phase 7).
+ * Will switch to `Authorization: Bearer <jwt>` when Cognito is wired.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/v1';
+export interface ApiClientConfig {
+    /** Base URL including the version prefix, e.g. `http://localhost:3000/v1`. */
+    baseUrl: string;
+    /** Called after any 401 response, before the error is thrown. */
+    onUnauthorized?: () => void;
+}
 
-/** Stored getter — set by AuthProvider so the client can attach the user ID header. */
+let config: ApiClientConfig = { baseUrl: 'http://localhost:3000/v1' };
+
+export function configureApiClient(next: Partial<ApiClientConfig>) {
+    config = { ...config, ...next };
+}
+
+/** Stored getter — set by the app's auth provider so the client can attach the user ID header. */
 let getUserId: (() => string | null) | null = null;
 
 export function setGetUserId(fn: () => string | null) {
@@ -51,13 +66,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
             message = response.statusText || message;
         }
 
-        // 401 → redirect to login
         if (response.status === 401) {
-            localStorage.removeItem('nc_user_id');
-            localStorage.removeItem('nc_email');
-            if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/dev-login')) {
-                window.location.assign('/dev-login');
-            }
+            config.onUnauthorized?.();
         }
 
         throw new ApiError(response.status, code, message);
@@ -72,10 +82,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 /** Wrapper to catch network errors (offline, DNS failures, etc.). */
-async function safeFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+async function safeFetch(input: string, init?: RequestInit): Promise<Response> {
     try {
         return await fetch(input, init);
-    } catch (err) {
+    } catch {
         throw new ApiError(0, 'NETWORK_ERROR', 'Unable to reach the server. Please check your connection.');
     }
 }
@@ -95,7 +105,7 @@ function buildHeaders(): Record<string, string> {
 
 export const apiClient = {
     async get<T>(path: string): Promise<T> {
-        const response = await safeFetch(`${API_BASE_URL}${path}`, {
+        const response = await safeFetch(`${config.baseUrl}${path}`, {
             method: 'GET',
             headers: buildHeaders(),
         });
@@ -103,7 +113,7 @@ export const apiClient = {
     },
 
     async post<T>(path: string, body?: unknown): Promise<T> {
-        const response = await safeFetch(`${API_BASE_URL}${path}`, {
+        const response = await safeFetch(`${config.baseUrl}${path}`, {
             method: 'POST',
             headers: buildHeaders(),
             body: body ? JSON.stringify(body) : undefined,
@@ -112,7 +122,7 @@ export const apiClient = {
     },
 
     async patch<T>(path: string, body?: unknown): Promise<T> {
-        const response = await safeFetch(`${API_BASE_URL}${path}`, {
+        const response = await safeFetch(`${config.baseUrl}${path}`, {
             method: 'PATCH',
             headers: buildHeaders(),
             body: body ? JSON.stringify(body) : undefined,
@@ -121,7 +131,7 @@ export const apiClient = {
     },
 
     async put<T>(path: string, body?: unknown): Promise<T> {
-        const response = await safeFetch(`${API_BASE_URL}${path}`, {
+        const response = await safeFetch(`${config.baseUrl}${path}`, {
             method: 'PUT',
             headers: buildHeaders(),
             body: body ? JSON.stringify(body) : undefined,
@@ -130,7 +140,7 @@ export const apiClient = {
     },
 
     async delete<T>(path: string): Promise<T> {
-        const response = await safeFetch(`${API_BASE_URL}${path}`, {
+        const response = await safeFetch(`${config.baseUrl}${path}`, {
             method: 'DELETE',
             headers: buildHeaders(),
         });

@@ -6,8 +6,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Send, Shield, Loader2 } from "lucide-react";
-import { listMessages, sendMessage } from "@/api/messages";
-import { getConnection } from "@/api/connections";
+import {
+  listMessages,
+  sendMessage,
+  getConnection,
+} from "@neighborhood-connect/api-client";
 
 const Messages = () => {
     const navigate = useNavigate();

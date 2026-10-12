@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Baby, Coffee, Trees, Dog, MessageCircle, Check, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { listInterests } from "@/api/interests";
+import { listInterests } from "@neighborhood-connect/api-client";
 
 // Map interest labels to icons
 const interestIconMap: Record<string, React.ReactNode> = {

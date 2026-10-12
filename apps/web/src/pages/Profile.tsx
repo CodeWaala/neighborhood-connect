@@ -8,8 +8,13 @@ import {
     Baby, Dog, Coffee, Trees, MessageCircle, Clock,
     MapPin, Shield, ArrowLeft, Heart, Sparkles, Loader2, Check, Users,
 } from "lucide-react";
-import { getProfileById, type Profile as ProfileType } from "@/api/profile";
-import { createConnection, listConnections, updateConnection } from "@/api/connections";
+import {
+  getProfileById,
+  type Profile as ProfileType,
+  createConnection,
+  listConnections,
+  updateConnection,
+} from "@neighborhood-connect/api-client";
 import AppHeader from "@/components/AppHeader";
 
 const interestIcons: Record<string, React.ReactNode> = {

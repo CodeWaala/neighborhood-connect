@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Shield, Users, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { searchNeighborhoods } from "@/api/neighborhoods";
-import type { Neighborhood } from "@/api/neighborhoods";
+import {
+  searchNeighborhoods,
+  type Neighborhood,
+} from "@neighborhood-connect/api-client";
 import AppHeader from "@/components/AppHeader";
 import OnboardingProgress from "@/components/OnboardingProgress";
 
