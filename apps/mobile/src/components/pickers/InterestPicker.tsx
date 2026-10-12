@@ -26,10 +26,12 @@ export function useInterests() {
 interface InterestPickerProps {
   selectedIds: string[];
   onChange: (ids: string[]) => void;
+  /** `tiles`: two-column cards (onboarding). `list`: checklist rows (profile editor). */
+  layout?: 'tiles' | 'list';
 }
 
-/** Multi-select interest tiles (onboarding step 3 and the profile editor). */
-export function InterestPicker({ selectedIds, onChange }: InterestPickerProps) {
+/** Multi-select interests (onboarding step 3 and the profile editor). */
+export function InterestPicker({ selectedIds, onChange, layout = 'tiles' }: InterestPickerProps) {
   const { colors } = useTheme();
   const { data: interests, isLoading, isError, refetch } = useInterests();
 
@@ -47,6 +49,47 @@ export function InterestPicker({ selectedIds, onChange }: InterestPickerProps) {
 
   function toggle(id: string) {
     onChange(selectedIds.includes(id) ? selectedIds.filter((x) => x !== id) : [...selectedIds, id]);
+  }
+
+  if (layout === 'list') {
+    return (
+      <View style={[styles.list, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {interests.map(({ id, label }, i) => {
+          const selected = selectedIds.includes(id);
+          const Icon = interestIcon(label);
+          return (
+            <Pressable
+              key={id}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: selected }}
+              accessibilityLabel={label}
+              onPress={() => toggle(id)}
+              style={({ pressed }) => [
+                styles.row,
+                i > 0 && { borderTopWidth: 1, borderTopColor: colors.border },
+                pressed && { backgroundColor: colors.muted },
+              ]}
+            >
+              <View style={[styles.rowIcon, { backgroundColor: selected ? colors.primarySoft : colors.muted }]}>
+                <Icon size={20} color={selected ? colors.primary : colors.mutedForeground} strokeWidth={2} />
+              </View>
+              <Text style={[styles.rowLabel, { color: colors.foreground }]}>{label}</Text>
+              <View
+                style={[
+                  styles.rowCheck,
+                  {
+                    backgroundColor: selected ? colors.primary : 'transparent',
+                    borderColor: selected ? colors.primary : colors.controlBorder,
+                  },
+                ]}
+              >
+                {selected && <Check size={14} color={colors.onPrimary} strokeWidth={3.5} />}
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
   }
 
   return (
@@ -120,6 +163,39 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: fonts.bold,
     fontSize: 16,
+  },
+  list: {
+    borderWidth: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  row: {
+    minHeight: 64,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  rowIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowLabel: {
+    flex: 1,
+    fontFamily: fonts.bold,
+    fontSize: 17,
+  },
+  rowCheck: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   check: {
     position: 'absolute',

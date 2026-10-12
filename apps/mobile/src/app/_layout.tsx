@@ -93,6 +93,10 @@ function RootNavigator() {
         <Stack.Screen name="neighbor/[id]" />
         <Stack.Screen name="request-sent" options={{ gestureEnabled: false }} />
         <Stack.Screen name="chat/[id]" />
+        <Stack.Screen name="edit/role" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="edit/interests" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="edit/availability" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="edit/about" options={{ presentation: 'modal' }} />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !hasProfile}>
         <Stack.Screen name="onboarding" />

@@ -23,6 +23,19 @@ Ship an iOS + Android app for NearbyPals that covers the full MVP loop (onboard 
 - App Store / Play Store public release (v1 targets internal testing: TestFlight + Play internal track)
 - Option B Discover ("one at a time")
 
+## Progress
+
+| Phase | Status | Notes |
+|---|---|---|
+| M1 | Done | Expo SDK 57; Metro resolves pnpm workspace packages without `node-linker=hoisted`. Bundle ID placeholder `com.codewaala.nearbypals`. |
+| M2 | Done | If the API can't be reached at launch, the session is kept and a retry screen is shown (web signs out instead). |
+| M3 | Done | |
+| M4 | Done | No API change needed: `GET /discovery` already returns each match's full interests and availability, so overlap is computed in the app. |
+| M5 | Done | Connected rows fetch each chat's messages for the last-message preview (no API change). |
+| M6 | Done | API: `PATCH /profile` gains `childAgeRange`; discovery now hides profiles with `isProfilePublic=false`. |
+| M7 | Not started | |
+| M8 | Not started | |
+
 ---
 
 ## Phase M1: Project Setup

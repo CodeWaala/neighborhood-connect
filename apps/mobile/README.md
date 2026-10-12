@@ -33,15 +33,24 @@ user; a blank email creates a new test user.
 - `src/app/` — routes (Expo Router); every file is a screen, `_layout.tsx` files are navigators
   - `_layout.tsx` — fonts, TanStack Query, auth, and the routing guard (`Stack.Protected`):
     no user → `welcome` / `sign-in`; user without a profile → `onboarding/`; otherwise `(tabs)/`
+  - `onboarding/` — name & neighborhood → role → interests → availability
   - `(tabs)/` — Discover (`index`), Connections (pending-request badge), Profile
+  - `neighbor/[id]`, `request-sent`, `chat/[id]`, `edit/*` (profile editors, shown as modals)
 - `src/auth/` — `AuthContext` (session restore, dev sign-in, sign-out on 401) and session storage
   (`expo-secure-store` on phones; `localStorage` in the web preview)
-- `src/components/` — `Button`, `TextField`, `Screen`/`ScreenTitle`
+- `src/components/` — `Button`, `TextField`, `Screen`/`ScreenTitle`, `Avatar`, `Chip`, `Skeleton`,
+  `EditScaffold`; `pickers/` (role, interests, availability) are shared by onboarding and the editors
+- `src/lib/matching.ts` — shared interests and overlapping availability ("You’re both free Tue & Thu mornings")
+- `src/hooks/` — data hooks (`useMyProfile`, `useConnections`, `useSendRequest`, …)
 - `src/theme.ts` — colors (light + dark), Nunito font, type scale, radii; `useTheme()` follows the phone's appearance
 - Icons: `lucide-react-native`
 - API calls: `@neighborhood-connect/api-client` (shared with web); types: `@neighborhood-connect/types`
 
 ## Notes
+
+- New screens that need sign-in must be declared inside the `Stack.Protected` guard in
+  `src/app/_layout.tsx`; Expo Router adds undeclared routes outside it.
+- Run the dev server without `CI=1` while editing: in CI mode Metro doesn't watch files.
 
 - pnpm workspace packages resolve in Metro without `node-linker=hoisted` (checked with `expo export` for iOS and Android).
 - Bundle ID / package: `com.codewaala.nearbypals` (placeholder — confirm before the first EAS build).
