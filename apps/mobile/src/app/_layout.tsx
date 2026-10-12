@@ -1,22 +1,29 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme as NavTheme } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { AuthProvider, useAuth } from '@/auth/AuthContext';
+import { UnreachableScreen } from '@/components/UnreachableScreen';
 import { fontAssets, fonts, useTheme } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
+// Same defaults as the web app
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 30_000,
+    },
+  },
+});
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontAssets);
   const { scheme, colors } = useTheme();
-
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
 
   // Keep the splash screen up until Nunito is ready (fall back to system font on error)
   if (!fontsLoaded && !fontError) {
@@ -43,9 +50,54 @@ export default function RootLayout() {
   };
 
   return (
-    <ThemeProvider value={navTheme}>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <Stack screenOptions={{ headerShown: false }} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider value={navTheme}>
+          <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+          <RootNavigator />
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+/**
+ * Routing guard:
+ * - no user              → Welcome / Sign in
+ * - user without profile → Onboarding
+ * - user with profile    → Tabs
+ */
+function RootNavigator() {
+  const { status, hasProfile } = useAuth();
+  const restoring = status === 'restoring';
+
+  useEffect(() => {
+    if (!restoring) {
+      SplashScreen.hideAsync();
+    }
+  }, [restoring]);
+
+  if (restoring) {
+    return null;
+  }
+  if (status === 'unreachable') {
+    return <UnreachableScreen />;
+  }
+
+  const signedIn = status === 'signedIn';
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={signedIn && hasProfile}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+      <Stack.Protected guard={signedIn && !hasProfile}>
+        <Stack.Screen name="onboarding" />
+      </Stack.Protected>
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="sign-in" />
+      </Stack.Protected>
+    </Stack>
   );
 }

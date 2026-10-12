@@ -6,11 +6,19 @@ Plan: [`docs/plans/mobile-app-v1.md`](../../docs/plans/mobile-app-v1.md).
 ## Run
 
 ```bash
-pnpm install                       # from the repo root
+pnpm install                                   # from the repo root
+cp apps/mobile/env.example apps/mobile/.env.local   # then set EXPO_PUBLIC_API_URL
 pnpm --filter @neighborhood-connect/mobile dev
 ```
 
-Scan the QR code with Expo Go, or press `i` / `a` for a simulator.
+Scan the QR code with Expo Go, or press `i` / `a` for a simulator (`w` opens a web preview).
+
+`EXPO_PUBLIC_API_URL` must include `/v1`. On a real phone use your computer's LAN IP
+(e.g. `http://192.168.1.20:3000/v1`), not `localhost`; the Android emulator uses `10.0.2.2`.
+For the web preview, add `http://localhost:8081` to the API's `CORS_ORIGINS`.
+
+Sign in with the dev login (development builds only): any email signs in or creates that
+user; a blank email creates a new test user.
 
 ## Scripts
 
@@ -23,6 +31,12 @@ Scan the QR code with Expo Go, or press `i` / `a` for a simulator.
 ## Layout
 
 - `src/app/` — routes (Expo Router); every file is a screen, `_layout.tsx` files are navigators
+  - `_layout.tsx` — fonts, TanStack Query, auth, and the routing guard (`Stack.Protected`):
+    no user → `welcome` / `sign-in`; user without a profile → `onboarding/`; otherwise `(tabs)/`
+  - `(tabs)/` — Discover (`index`), Connections (pending-request badge), Profile
+- `src/auth/` — `AuthContext` (session restore, dev sign-in, sign-out on 401) and session storage
+  (`expo-secure-store` on phones; `localStorage` in the web preview)
+- `src/components/` — `Button`, `TextField`, `Screen`/`ScreenTitle`
 - `src/theme.ts` — colors (light + dark), Nunito font, type scale, radii; `useTheme()` follows the phone's appearance
 - Icons: `lucide-react-native`
 - API calls: `@neighborhood-connect/api-client` (shared with web); types: `@neighborhood-connect/types`

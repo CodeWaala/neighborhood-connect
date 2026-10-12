@@ -38,6 +38,12 @@ export interface ThemeColors {
   /** Notification badge (pending requests). */
   badge: string;
   onBadge: string;
+  /** Destructive text (Sign out). */
+  danger: string;
+  /** Input placeholder text. */
+  placeholder: string;
+  /** Neutral tile / avatar background. */
+  muted: string;
 }
 
 export const lightColors: ThemeColors = {
@@ -54,6 +60,9 @@ export const lightColors: ThemeColors = {
   onAccentSoft: '#8A3A1F',
   badge: '#C4552F',
   onBadge: '#FFFFFF',
+  danger: '#B03A2E',
+  placeholder: '#8A786B',
+  muted: '#F3EFEC',
 };
 
 export const darkColors: ThemeColors = {
@@ -70,6 +79,9 @@ export const darkColors: ThemeColors = {
   onAccentSoft: '#F0A68C',
   badge: '#E07552',
   onBadge: '#1F1914',
+  danger: '#F0897A',
+  placeholder: '#8F857B',
+  muted: '#352D26',
 };
 
 // ──────────────────────────────────────────────
