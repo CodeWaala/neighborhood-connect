@@ -44,6 +44,7 @@ model User {
   connectionsRequested Connection[] @relation("ConnectionRequester")
   connectionsReceived  Connection[] @relation("ConnectionRecipient")
   messages      Message[]
+  deviceTokens  DeviceToken[]
 }
 
 model Profile {
@@ -156,4 +157,24 @@ model Message {
 
   connection   Connection @relation(fields: [connectionId], references: [id])
   sender       User       @relation(fields: [senderId], references: [id])
+}
+
+enum DevicePlatform {
+  ios
+  android
+}
+
+/// An Expo push token for a signed-in user's Mobile App install (ADR 0003 —
+/// Expo's Push service, not raw APNs/FCM device tokens).
+model DeviceToken {
+  id         String         @id @default(uuid())
+  userId     String
+  token      String         @unique
+  platform   DevicePlatform
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  user       User           @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

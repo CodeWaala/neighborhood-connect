@@ -1,10 +1,16 @@
 import { Tabs } from 'expo-router';
 import { Compass, MessageCircle, User, Users } from 'lucide-react-native';
+import { useEffect } from 'react';
 
 import { useThemeColors } from '@/lib/theme-colors';
+import { registerForPushNotifications } from '@/lib/push';
 
 export default function TabsLayout() {
   const colors = useThemeColors();
+
+  useEffect(() => {
+    void registerForPushNotifications();
+  }, []);
 
   return (
     <Tabs

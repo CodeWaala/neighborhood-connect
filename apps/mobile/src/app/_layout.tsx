@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as Sentry from '@sentry/react-native';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View, useColorScheme } from 'react-native';
@@ -6,6 +7,13 @@ import { vars } from 'nativewind';
 
 import '../global.css';
 import { AuthProvider, useAuth } from '@/auth/AuthContext';
+
+// No-ops without a real DSN (ticket 008 — a Sentry project hasn't been
+// created yet; set EXPO_PUBLIC_SENTRY_DSN once one exists).
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  enabled: !__DEV__,
+});
 
 const themeVars = {
   light: vars({
@@ -95,7 +103,7 @@ function RootNavigator() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   const colorScheme = useColorScheme();
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
   const [queryClient] = useState(() => new QueryClient());
@@ -112,3 +120,5 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

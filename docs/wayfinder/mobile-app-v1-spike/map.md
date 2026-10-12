@@ -45,6 +45,18 @@ beta.
 - [Build Discovery screen](./tickets/003-build-discovery-screen.md): real Discovery screen, plus `/neighbor/[id]` (full profile + connect/accept) and `/request-sent` (confirmation), which weren't separately ticketed but are the same flow.
 - [Build Connections screen](./tickets/004-build-connections-screen.md): received/sent/accepted sections with accept/decline.
 - [Build Messages screen](./tickets/005-build-messages-screen.md): added a thread-list Messages tab (the web app has no equivalent — it links straight from Connections) plus `/chat/[id]` with 5s polling.
+- [Build Profile management screen](./tickets/006-build-profile-screen.md): hub + 4 focused editors instead of one long form; dropped child/pet-info fields since they're non-functional on the web too.
+- [Push notification registration](./tickets/007-push-notification-registration.md): new `DeviceToken` model + `POST /v1/devices` (upserts by token, verified against the real API), mobile side requests permission and registers — but can't produce real tokens until ticket 009 creates the EAS project (`getExpoPushTokenAsync` needs a `projectId`). No-ops gracefully until then.
+- [Sentry crash reporting setup](./tickets/008-sentry-crash-reporting.md): `Sentry.init`/`Sentry.wrap` wired, `metro.config.js` composed with `getSentryExpoConfig`. Same no-Sentry-account-yet gap as 007 — no-ops safely without a DSN until one exists.
+
+## Frontier
+
+- [EAS build & TestFlight setup](./tickets/009-eas-build-testflight.md) —
+  everything AFK-possible is done (`eas.json`, bundle identifier, app
+  identity). What's left is genuinely HITL: `eas login`, `eas init` (which
+  also unblocks real push tokens — see ticket 007), Apple Developer
+  enrollment, `eas build`, `eas submit`. See the ticket's "Progress"
+  section for the exact ordered checklist.
 
 ## Not yet specified
 
@@ -53,9 +65,6 @@ beta.
   UI — still open. Ticket 001 found that the whole project defers real
   Cognito wiring to a later phase, so this sharpens once that phase is
   actually reached (project-wide, not mobile-specific).
-- EAS build profile details (dev/preview/production channels, how `API_URL`
-  is handled per environment) — sharpens once there's a feature set worth
-  shipping to TestFlight.
 
 ## Out of scope
 

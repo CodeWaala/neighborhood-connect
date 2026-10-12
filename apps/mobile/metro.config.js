@@ -1,7 +1,9 @@
-const { getDefaultConfig } = require('expo/metro-config');
+const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 const { withNativeWind } = require('nativewind/metro');
 
-const config = getDefaultConfig(__dirname);
+// getSentryExpoConfig wraps expo/metro-config's getDefaultConfig, adding the
+// serializer Sentry needs for source-map upload (ticket 008).
+const config = getSentryExpoConfig(__dirname);
 
 // pnpm's node_modules relies on symlinks into its content-addressable store;
 // Metro doesn't follow them by default, which breaks resolving a dependency's
