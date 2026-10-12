@@ -90,6 +90,8 @@ function RootNavigator() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={signedIn && hasProfile}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="neighbor/[id]" />
+        <Stack.Screen name="request-sent" options={{ gestureEnabled: false }} />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !hasProfile}>
         <Stack.Screen name="onboarding" />
