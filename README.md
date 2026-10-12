@@ -24,6 +24,8 @@ pnpm test
 
 ## Repo layout
 
-- `apps/web`: web app (stack to be chosen)
-- `apps/api`: API service (stack to be chosen)
+- `apps/web`: web app (Vite + React)
+- `apps/api`: API service (NestJS + Prisma)
+- `apps/mobile`: Mobile App (React Native + Expo), iOS first — see `PROJECT.md` §12
+- `apps/marketing`: marketing site (Next.js)
 - `packages/types`: shared TypeScript types

@@ -119,7 +119,7 @@ The MVP explicitly does **not** include:
 - Events or RSVPs
 - Monetization features (ads, subscriptions) in v1
 - Advanced recommendation engines
-- Push notifications (optional later)
+- Push notifications on the Web App (optional later) — the Mobile App ships with push notifications from v1; see §12
 - Location tracking or maps
 
 This keeps scope controlled and quality high.
@@ -175,11 +175,10 @@ Potential future expansions (**not** to be built now):
 - Local partnerships
 - Group meetups
 - Calendar integrations
-- Native mobile apps
 - Moderation tooling
 - Growth loops
 
-These are intentionally excluded from current implementation.
+These are intentionally excluded from current implementation. Native mobile apps were originally on this list but have since moved into current scope — see §12.
 
 ## 11. Development Mindset
 
@@ -189,3 +188,17 @@ This product is:
 - Human-centered
 - Designed to disappear once it does its job
 - Success is measured offline, not in app usage metrics.
+
+## 12. Mobile App (iOS first, Android to follow)
+
+Native mobile is now in scope, superseding its earlier listing as a non-goal. See `GLOSSARY.md` for terms (Mobile App, Mobile Auth Client, Device Token) and `docs/adr/0001`–`0003` for the architecture decisions this summarizes.
+
+- **Stack**: React Native via Expo, in this monorepo at `apps/mobile`, reusing `@neighborhood-connect/types`. Not native Swift — solo developer, React/TypeScript strength, Android committed as a near-term follow-on from the same codebase.
+- **v1 scope**: full MVP feature parity (onboarding, discovery, connections, messaging, profile management) ported faithfully, with existing UX rough edges fixed and native idioms adopted. Net-new features beyond the web MVP are deferred past v1.
+- **Auth**: same Cognito User Pool as the Web App, through a dedicated Mobile Auth Client (own redirect URI scheme, independent session lifetime).
+- **Push notifications**: in scope for v1, via Expo's Push Notification service (not direct AWS SNS/APNs) — delivers new connection requests and new messages.
+- **Navigation**: Expo Router.
+- **Design**: screens are built code-first as React Native + NativeWind components (no separate static-mockup stage).
+- **Offline**: online-required for v1; no offline caching or optimistic UI yet.
+- **Observability**: Sentry (Expo SDK) for crash reporting from the start of development.
+- **Distribution**: TestFlight beta before public App Store release.
