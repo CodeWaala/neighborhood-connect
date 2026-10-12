@@ -62,6 +62,8 @@ export class DiscoveryService {
         id: { notIn: [userId, ...excludedUserIds] },
         profile: {
           neighborhoodId: profile.neighborhoodId,
+          // Respect "Show me in matches" (off = hidden from everyone's discovery)
+          isProfilePublic: true,
           ...(roleFilter ? { role: roleFilter } : {}),
         },
         interests: { some: { interestId: { in: interestIds } } },
