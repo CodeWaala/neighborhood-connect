@@ -26,9 +26,14 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { getMyProfile, updateProfile, replaceInterests, replaceAvailability } from "@/api/profile";
-import { listInterests } from "@/api/interests";
-import { listAvailabilityWindows } from "@/api/availability";
+import {
+  getMyProfile,
+  updateProfile,
+  replaceInterests,
+  replaceAvailability,
+  listInterests,
+  listAvailabilityWindows,
+} from "@neighborhood-connect/api-client";
 
 // ────────────────────────────────────────────
 // Static data (roles & days are not from API)

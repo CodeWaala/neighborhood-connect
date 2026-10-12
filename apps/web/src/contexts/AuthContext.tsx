@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
-import { setGetUserId } from '@/api/client';
-import { devLogin, getMe } from '@/api/auth';
+import {
+    configureApiClient,
+    devLogin,
+    getMe,
+    getMyProfile,
+    setGetUserId,
+} from '@neighborhood-connect/api-client';
 
 // ──────────────────────────────────────────────
 // Types
@@ -33,6 +38,22 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const STORAGE_KEY_USER_ID = 'nc_user_id';
 const STORAGE_KEY_EMAIL = 'nc_email';
+
+// ──────────────────────────────────────────────
+// API client setup
+// ──────────────────────────────────────────────
+
+configureApiClient({
+    baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/v1',
+    // 401 → clear the stored session and redirect to login
+    onUnauthorized: () => {
+        localStorage.removeItem(STORAGE_KEY_USER_ID);
+        localStorage.removeItem(STORAGE_KEY_EMAIL);
+        if (!window.location.pathname.startsWith('/dev-login')) {
+            window.location.assign('/dev-login');
+        }
+    },
+});
 
 // ──────────────────────────────────────────────
 // Provider
@@ -71,7 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setEmail(result.user.email);
                     // Check if this user has a profile (try fetching, catch 404)
                     try {
-                        const { getMyProfile } = await import('@/api/profile');
                         await getMyProfile();
                         setHasProfile(true);
                     } catch {
@@ -114,7 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Check if the user has a profile
         try {
             setGetUserId(() => id);
-            const { getMyProfile } = await import('@/api/profile');
             await getMyProfile();
             setHasProfile(true);
         } catch {

@@ -1,18 +1,11 @@
 import { apiClient } from './client';
+import type { Neighborhood } from './neighborhoods';
 
 // ──────────────────────────────────────────────
 // Types
 // ──────────────────────────────────────────────
 
 export type ProfileRole = 'parent' | 'pet' | 'both';
-
-export interface Neighborhood {
-    id: string;
-    name: string;
-    city: string | null;
-    region: string | null;
-    postalCode: string | null;
-}
 
 export interface Child {
     id: string;

@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sun, Sunset, Moon, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { listAvailabilityWindows } from "@/api/availability";
+import { listAvailabilityWindows } from "@neighborhood-connect/api-client";
 
 const days = [
     { id: "mon", label: "Mon" },

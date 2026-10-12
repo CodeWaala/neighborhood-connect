@@ -8,7 +8,7 @@ import {
     listConnections,
     updateConnection,
     type Connection,
-} from "@/api/connections";
+} from "@neighborhood-connect/api-client";
 import {
     Baby, Dog, MessageCircle, Clock, Users,
     Check, X, Loader2, ArrowLeft, Compass,

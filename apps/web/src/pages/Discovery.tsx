@@ -7,8 +7,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { listMatches, type DiscoveryMatch } from "@/api/discovery";
-import { createConnection } from "@/api/connections";
+import {
+  listMatches,
+  type DiscoveryMatch,
+  createConnection,
+} from "@neighborhood-connect/api-client";
 import AppHeader from "@/components/AppHeader";
 
 const interestIcons: Record<string, React.ReactNode> = {
