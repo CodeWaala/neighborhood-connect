@@ -1,4 +1,10 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConnectionStatus } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -89,6 +95,7 @@ export class ConnectionsService {
     if (connection.requesterId !== userId && connection.recipientId !== userId) {
       throw new BadRequestException('Not allowed');
     }
+    this.assertTransitionAllowed(connection, userId, status);
 
     const updated = await this.prisma.connection.update({
       where: { id: connectionId },
@@ -102,5 +109,39 @@ export class ConnectionsService {
       void this.notifications.notifyConnectionAccepted(updated, userId);
     }
     return updated;
+  }
+
+  /**
+   * - accepted / declined: only the recipient, and only while the request is pending
+   * - blocked: either person, at any time
+   * - pending: never (a request can't be reopened)
+   */
+  private assertTransitionAllowed(
+    connection: {
+      requesterId: string;
+      recipientId: string;
+      status: ConnectionStatus;
+    },
+    userId: string,
+    status: ConnectionStatus,
+  ) {
+    if (status === 'blocked') {
+      return;
+    }
+    if (status === 'pending') {
+      throw new BadRequestException(
+        'A connection cannot be set back to pending',
+      );
+    }
+    if (connection.recipientId !== userId) {
+      throw new ForbiddenException(
+        'Only the recipient can accept or decline a request',
+      );
+    }
+    if (connection.status !== 'pending') {
+      throw new BadRequestException(
+        `This request was already ${connection.status}`,
+      );
+    }
   }
 }
