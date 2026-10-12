@@ -4,6 +4,7 @@ import type { ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { usePendingRequestCount } from '@/hooks/usePendingRequestCount';
+import { usePushNotifications } from '@/notifications/usePushNotifications';
 import { fonts, useTheme } from '@/theme';
 
 function tabIcon(Icon: LucideIcon) {
@@ -17,6 +18,7 @@ export default function TabsLayout() {
   const { colors } = useTheme();
   const pendingCount = usePendingRequestCount();
   const insets = useSafeAreaInsets();
+  usePushNotifications();
 
   return (
     <Tabs

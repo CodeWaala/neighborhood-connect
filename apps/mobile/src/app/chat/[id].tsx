@@ -8,7 +8,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, MessageCircle, Send } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -28,9 +28,10 @@ import { Screen } from '@/components/Screen';
 import { otherParty } from '@/hooks/useConnections';
 import { useMyProfile } from '@/hooks/useMyProfile';
 import { overlappingSlots, roleContext, sharedInterests, sharedSummary, type AvailabilitySlot } from '@/lib/matching';
+import { setOpenChat } from '@/notifications/push';
 import { fonts, hitSize, radius, spacing, textStyles, useTheme } from '@/theme';
 
-/** Fallback refresh while the chat is open; push notifications (M7) will also trigger a refetch. */
+/** Fallback refresh while the chat is open; an incoming message push also triggers a refetch. */
 const POLL_INTERVAL_MS = 10_000;
 const MAX_MESSAGE_LENGTH = 1000;
 
@@ -58,6 +59,12 @@ export default function ChatScreen() {
     refetchInterval: POLL_INTERVAL_MS,
     enabled: connection.data?.status === 'accepted',
   });
+
+  // Message pushes for this chat refresh it silently instead of showing a banner
+  useEffect(() => {
+    setOpenChat(connectionId);
+    return () => setOpenChat(null);
+  }, [connectionId]);
 
   const [draft, setDraft] = useState('');
   const send = useMutation({

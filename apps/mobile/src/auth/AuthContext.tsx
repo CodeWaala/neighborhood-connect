@@ -19,6 +19,7 @@ import {
 } from 'react';
 
 import { API_URL } from '@/config';
+import { unregisterPush } from '@/notifications/push';
 
 import { clearSession, loadSession, saveSession, type StoredSession } from './session-storage';
 
@@ -93,6 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    // While the user ID is still attached, stop pushes to this device
+    await unregisterPush();
     userIdRef.current = null;
     await clearSession();
     queryClient.clear();

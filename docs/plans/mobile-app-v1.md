@@ -33,7 +33,7 @@ Ship an iOS + Android app for NearbyPals that covers the full MVP loop (onboard 
 | M4 | Done | No API change needed: `GET /discovery` already returns each match's full interests and availability, so overlap is computed in the app. |
 | M5 | Done | Connected rows fetch each chat's messages for the last-message preview (no API change). |
 | M6 | Done | API: `PATCH /profile` gains `childAgeRange`; discovery now hides profiles with `isProfilePublic=false`. |
-| M7 | Not started | |
+| M7 | Done (code) | API sends pushes (expo-server-sdk v5, the newest CommonJS release that supports Node 20). Needs `eas init`, Apple + Firebase credentials and a development build to test on a phone; see `apps/mobile/README.md`. Message pushes include the first 80 characters (open question 3). |
 | M8 | Not started | |
 
 ---

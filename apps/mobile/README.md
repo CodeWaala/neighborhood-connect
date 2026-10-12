@@ -24,7 +24,8 @@ user; a blank email creates a new test user.
 
 | Script | What it does |
 |---|---|
-| `dev` / `start` | Start the Metro dev server |
+| `dev` / `start` | Start the dev server for **Expo Go** |
+| `dev:client` | Start the dev server for a **development build** (needed for push notifications) |
 | `lint` | `expo lint` (ESLint, `eslint-config-expo`) |
 | `typecheck` | `tsc --noEmit` |
 
@@ -45,6 +46,26 @@ user; a blank email creates a new test user.
 - `src/theme.ts` — colors (light + dark), Nunito font, type scale, radii; `useTheme()` follows the phone's appearance
 - Icons: `lucide-react-native`
 - API calls: `@neighborhood-connect/api-client` (shared with web); types: `@neighborhood-connect/types`
+
+## Push notifications (development build)
+
+Push doesn't work in Expo Go, simulators or the web preview; the app skips it there. To test it on a phone:
+
+1. **Expo project:** `npm i -g eas-cli`, `eas login`, then in `apps/mobile` run `eas init`. This adds
+   `extra.eas.projectId` to `app.json`; commit that change.
+2. **iOS** (paid Apple Developer account): `eas device:create` to register your iPhone, then
+   `eas build --profile development --platform ios`. Let EAS create the push key when it asks.
+3. **Android** (Firebase project): add an Android app with package `com.codewaala.nearbypals`,
+   download `google-services.json` into `apps/mobile/`, add `"googleServicesFile": "./google-services.json"`
+   under `android` in `app.json`, and upload an FCM V1 service-account key with `eas credentials`.
+   Then `eas build --profile development --platform android`.
+4. Install the build from the link EAS gives you, run `pnpm dev:client`, open the app and sign in.
+   The permission prompt appears when you first reach the tabs (after onboarding).
+5. Send a request or message from another account, or use https://expo.dev/notifications with the
+   token the app registered (`DeviceToken` table).
+
+Taps open Connections (new request) or the chat (accepted request, new message). While the app is
+open, pushes refresh the data; a message for the chat you're in doesn't show a banner.
 
 ## Notes
 
