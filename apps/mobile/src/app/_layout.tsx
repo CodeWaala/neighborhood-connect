@@ -92,6 +92,7 @@ function RootNavigator() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="neighbor/[id]" />
         <Stack.Screen name="request-sent" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="chat/[id]" />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !hasProfile}>
         <Stack.Screen name="onboarding" />

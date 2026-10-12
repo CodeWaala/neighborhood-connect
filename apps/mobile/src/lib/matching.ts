@@ -79,19 +79,37 @@ export function overlapSentence(slots: AvailabilitySlot[]): string | null {
   return `You’re both free ${list}`;
 }
 
-/** Short description of someone's role: "Parent", "Pet parent", "Parent & pet parent". */
-export function roleContext(role: ProfileRole): string {
-  switch (role) {
-    case 'parent':
-      return 'Parent';
-    case 'pet':
-      return 'Pet parent';
-    case 'both':
-      return 'Parent & pet parent';
-  }
+const ROLE_CONTEXT: Record<ProfileRole, string> = {
+  parent: 'Parent',
+  pet: 'Pet parent',
+  both: 'Parent & pet parent',
+};
+
+/**
+ * Short description of someone's role: "Parent", "Pet parent", "Parent & pet parent".
+ * Accepts a plain string because connection payloads type `role` loosely.
+ */
+export function roleContext(role: ProfileRole | string): string {
+  return ROLE_CONTEXT[role as ProfileRole] ?? role;
 }
 
 /** First letter for avatar circles. */
 export function initial(name: string | null | undefined): string {
   return (name?.trim()[0] ?? '?').toUpperCase();
+}
+
+/**
+ * "You both enjoy stroller walks and are free Sat & Sun mornings." (chat banner)
+ * `subject` lets the empty chat say "You and Daniel both …". Null when nothing is shared.
+ */
+export function sharedSummary(interests: InterestRef[], slots: AvailabilitySlot[], subject = 'You both'): string | null {
+  const labels = interests.map((i) => i.label.toLowerCase());
+  const enjoy = labels.length === 0 ? null : labels.length === 1 ? labels[0] : `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
+  const times = groupByWindow(slots).map((g) => `${joinDays(g.days)} ${g.window.label.toLowerCase()}s`);
+  const free = times.length === 0 ? null : times.join(' and ');
+
+  if (enjoy && free) return `${subject} enjoy ${enjoy} and are free ${free}.`;
+  if (enjoy) return `${subject} enjoy ${enjoy}.`;
+  if (free) return `${subject} are free ${free}.`;
+  return null;
 }

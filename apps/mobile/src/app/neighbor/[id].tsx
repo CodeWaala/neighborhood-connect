@@ -190,9 +190,13 @@ function ConnectFooter({ userId, name }: { userId: string; name: string }) {
 
   if (connection?.status === 'accepted') {
     return (
-      <Note icon={<Check size={16} color={colors.primary} strokeWidth={2.5} />}>
-        You’re connected with {name}. Find them in Connections.
-      </Note>
+      <>
+        <Note icon={<Check size={16} color={colors.primary} strokeWidth={2.5} />}>You’re connected with {name}.</Note>
+        <Button
+          label={`Message ${name}`}
+          onPress={() => router.push({ pathname: '/chat/[id]', params: { id: connection.id } })}
+        />
+      </>
     );
   }
 
