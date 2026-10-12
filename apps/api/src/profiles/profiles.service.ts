@@ -9,6 +9,7 @@ type ProfileUpsertInput = {
   neighborhoodId?: string;
   avatarUrl?: string;
   isProfilePublic?: boolean;
+  childAgeRange?: string;
 };
 
 @Injectable()
@@ -75,7 +76,7 @@ export class ProfilesService {
       if (!role) {
         throw new BadRequestException('Missing required field: role');
       }
-      return this.prisma.profile.create({
+      const created = await this.prisma.profile.create({
         data: {
           userId,
           displayName: data.displayName as string,
@@ -86,9 +87,11 @@ export class ProfilesService {
           isProfilePublic: (data.isProfilePublic as boolean | undefined) ?? true,
         },
       });
+      await this.replaceChildAgeRange(userId, data.childAgeRange);
+      return created;
     }
 
-    return this.prisma.profile.update({
+    const updated = await this.prisma.profile.update({
       where: { userId },
       data: {
         displayName: data.displayName,
@@ -99,6 +102,32 @@ export class ProfilesService {
         neighborhoodId: data.neighborhoodId,
       },
     });
+    await this.replaceChildAgeRange(userId, data.childAgeRange);
+    return updated;
+  }
+
+  /**
+   * One child age range per profile for now. `undefined` leaves it alone;
+   * an empty string clears it.
+   */
+  private async replaceChildAgeRange(
+    userId: string,
+    ageRange: string | undefined,
+  ) {
+    if (ageRange === undefined) {
+      return;
+    }
+    const trimmed = ageRange.trim();
+    await this.prisma.$transaction([
+      this.prisma.child.deleteMany({ where: { profileId: userId } }),
+      ...(trimmed
+        ? [
+            this.prisma.child.create({
+              data: { profileId: userId, ageRange: trimmed },
+            }),
+          ]
+        : []),
+    ]);
   }
 
   async replaceInterests(userId: string, interestIds: string[]) {

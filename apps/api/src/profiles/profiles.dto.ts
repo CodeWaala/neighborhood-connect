@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEnum, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DayOfWeek, ProfileRole } from '@prisma/client';
 
@@ -26,6 +26,12 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsBoolean()
   isProfilePublic?: boolean;
+
+  /** Free-text age range of the user's child (e.g. "2-3 years"). Empty string clears it. */
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  childAgeRange?: string;
 }
 
 export class ReplaceInterestsDto {

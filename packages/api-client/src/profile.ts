@@ -66,6 +66,8 @@ export interface UpdateProfileInput {
     neighborhoodId?: string;
     avatarUrl?: string;
     isProfilePublic?: boolean;
+    /** One child age range per profile, e.g. "2-3 years". Empty string clears it. */
+    childAgeRange?: string;
 }
 
 // ──────────────────────────────────────────────
