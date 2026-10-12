@@ -11,6 +11,7 @@ import { InterestsModule } from './interests/interests.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { UsersModule } from './users/users.module';
 import { DiscoveryModule } from './discovery/discovery.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DiscoveryModule } from './discovery/discovery.module';
     ConnectionsModule,
     MessagesModule,
     DiscoveryModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

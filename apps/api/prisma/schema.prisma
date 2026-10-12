@@ -44,6 +44,7 @@ model User {
   connectionsRequested Connection[] @relation("ConnectionRequester")
   connectionsReceived  Connection[] @relation("ConnectionRecipient")
   messages      Message[]
+  deviceTokens  DeviceToken[]
 }
 
 model Profile {
@@ -156,4 +157,18 @@ model Message {
 
   connection   Connection @relation(fields: [connectionId], references: [id])
   sender       User       @relation(fields: [senderId], references: [id])
+}
+
+/// Expo push token for one of a user's devices (one row per token).
+model DeviceToken {
+  id         String   @id @default(uuid())
+  userId     String
+  token      String   @unique
+  platform   String
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

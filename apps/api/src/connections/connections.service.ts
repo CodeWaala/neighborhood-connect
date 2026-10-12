@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConnectionStatus } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 const CONNECTION_PROFILE_SELECT = {
@@ -23,7 +24,10 @@ const CONNECTION_PROFILE_SELECT = {
 
 @Injectable()
 export class ConnectionsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) { }
 
   async createConnection(requesterId: string, recipientId: string) {
     if (requesterId === recipientId) {
@@ -43,9 +47,12 @@ export class ConnectionsService {
       throw new ConflictException('A connection request already exists between these users');
     }
 
-    return this.prisma.connection.create({
+    const connection = await this.prisma.connection.create({
       data: { requesterId, recipientId },
     });
+    // Fire and forget: a failed push never fails the request
+    void this.notifications.notifyConnectionRequest(connection);
+    return connection;
   }
 
   async listConnections(userId: string) {
@@ -83,7 +90,7 @@ export class ConnectionsService {
       throw new BadRequestException('Not allowed');
     }
 
-    return this.prisma.connection.update({
+    const updated = await this.prisma.connection.update({
       where: { id: connectionId },
       data: {
         status,
@@ -91,5 +98,9 @@ export class ConnectionsService {
       },
       include: CONNECTION_PROFILE_SELECT,
     });
+    if (status === 'accepted' && connection.status !== 'accepted') {
+      void this.notifications.notifyConnectionAccepted(updated, userId);
+    }
+    return updated;
   }
 }

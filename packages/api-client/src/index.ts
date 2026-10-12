@@ -9,6 +9,7 @@ export * as availabilityApi from './availability';
 export * as discoveryApi from './discovery';
 export * as connectionsApi from './connections';
 export * as messagesApi from './messages';
+export * as devicesApi from './devices';
 
 // Flat re-exports so callers can `import { listMatches, type DiscoveryMatch } from '@neighborhood-connect/api-client'`
 export * from './auth';
@@ -19,3 +20,4 @@ export * from './availability';
 export * from './discovery';
 export * from './connections';
 export * from './messages';
+export * from './devices';

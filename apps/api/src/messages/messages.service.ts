@@ -1,9 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   async listMessages(connectionId: string, userId: string) {
     const connection = await this.prisma.connection.findUnique({ where: { id: connectionId } });
@@ -35,12 +39,15 @@ export class MessagesService {
       throw new BadRequestException('Not allowed');
     }
 
-    return this.prisma.message.create({
+    const message = await this.prisma.message.create({
       data: {
         connectionId,
         senderId: userId,
         body,
       },
     });
+    // Fire and forget: a failed push never fails the request
+    void this.notifications.notifyMessage(message, connection);
+    return message;
   }
 }
