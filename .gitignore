@@ -7,3 +7,4 @@ dist
 build
 .pnpm-store
 test-prettier.tmp
+*.tsbuildinfo

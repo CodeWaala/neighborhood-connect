@@ -1,8 +1,11 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import { View, useColorScheme } from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, View, useColorScheme } from 'react-native';
 import { vars } from 'nativewind';
 
 import '../global.css';
+import { AuthProvider, useAuth } from '@/auth/AuthContext';
 
 const themeVars = {
   light: vars({
@@ -51,16 +54,60 @@ const themeVars = {
   }),
 };
 
+/** Redirects between sign-in, onboarding, and the tabs based on auth state. */
+function RootNavigator() {
+  const { isLoading, isAuthenticated, hasProfile } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
+
+  useEffect(() => {
+    if (isLoading || hasProfile === null) return;
+    const onSignIn = segments[0] === 'sign-in';
+    const onOnboarding = segments[0] === 'onboarding';
+
+    if (!isAuthenticated) {
+      if (!onSignIn) router.replace('/sign-in');
+      return;
+    }
+    if (!hasProfile) {
+      if (!onOnboarding) router.replace('/onboarding');
+      return;
+    }
+    if (onSignIn || onOnboarding) {
+      router.replace('/discovery');
+    }
+  }, [isLoading, isAuthenticated, hasProfile, segments, router]);
+
+  if (isLoading || (isAuthenticated && hasProfile === null)) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="sign-in" />
+      <Stack.Screen name="onboarding" />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       <View style={themeVars[scheme]} className="flex-1">
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <RootNavigator />
+          </AuthProvider>
+        </QueryClientProvider>
       </View>
     </ThemeProvider>
   );

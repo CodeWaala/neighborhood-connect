@@ -1,27 +1,35 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { Compass, MessageCircle, User, Users } from 'lucide-react-native';
 
-const colors = {
-  light: { active: 'hsl(150, 30%, 45%)', inactive: 'hsl(25, 15%, 50%)', bg: 'hsl(45, 40%, 99%)' },
-  dark: { active: 'hsl(150, 35%, 55%)', inactive: 'hsl(30, 10%, 60%)', bg: 'hsl(25, 18%, 14%)' },
-};
+import { useThemeColors } from '@/lib/theme-colors';
 
 export default function TabsLayout() {
-  const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-  const palette = colors[scheme];
+  const colors = useThemeColors();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: palette.active,
-        tabBarInactiveTintColor: palette.inactive,
-        tabBarStyle: { backgroundColor: palette.bg },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.mutedForeground,
+        tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
       }}>
-      <Tabs.Screen name="discovery" options={{ title: 'Discovery' }} />
-      <Tabs.Screen name="connections" options={{ title: 'Connections' }} />
-      <Tabs.Screen name="messages" options={{ title: 'Messages' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+      <Tabs.Screen
+        name="discovery"
+        options={{ title: 'Discovery', tabBarIcon: ({ color, size }) => <Compass color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="connections"
+        options={{ title: 'Connections', tabBarIcon: ({ color, size }) => <Users color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="messages"
+        options={{ title: 'Messages', tabBarIcon: ({ color, size }) => <MessageCircle color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{ title: 'Profile', tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}
+      />
     </Tabs>
   );
 }
