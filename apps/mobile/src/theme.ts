@@ -44,6 +44,8 @@ export interface ThemeColors {
   placeholder: string;
   /** Neutral tile / avatar background. */
   muted: string;
+  /** Unchecked radio / checkbox outline, switch track when off. */
+  controlBorder: string;
 }
 
 export const lightColors: ThemeColors = {
@@ -63,6 +65,7 @@ export const lightColors: ThemeColors = {
   danger: '#B03A2E',
   placeholder: '#8A786B',
   muted: '#F3EFEC',
+  controlBorder: '#C9BEB4',
 };
 
 export const darkColors: ThemeColors = {
@@ -82,6 +85,7 @@ export const darkColors: ThemeColors = {
   danger: '#F0897A',
   placeholder: '#8F857B',
   muted: '#352D26',
+  controlBorder: '#6B5F55',
 };
 
 // ──────────────────────────────────────────────
