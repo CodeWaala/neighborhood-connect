@@ -34,7 +34,7 @@ Ship an iOS + Android app for NearbyPals that covers the full MVP loop (onboard 
 | M5 | Done | Connected rows fetch each chat's messages for the last-message preview (no API change). |
 | M6 | Done | API: `PATCH /profile` gains `childAgeRange`; discovery now hides profiles with `isProfilePublic=false`. |
 | M7 | Done (code) | API sends pushes (expo-server-sdk v5, the newest CommonJS release that supports Node 20). Needs `eas init`, Apple + Firebase credentials and a development build to test on a phone; see `apps/mobile/README.md`. Message pushes include the first 80 characters (open question 3). |
-| M8 | Not started | |
+| M8 | Done (code) | 52 Jest tests (matching, formatting, push payloads, debounce, auth flow, onboarding submit, Button). EAS profiles development / preview / beta / production; `EXPO_PUBLIC_DEV_LOGIN` keeps the dev login in test builds. Device QA checklist: `docs/mobile_qa_checklist.md`. TestFlight / Play internal need the owner's accounts, a hosted API, and a real app icon. |
 
 ---
 

@@ -17,7 +17,7 @@ Scan the QR code with Expo Go, or press `i` / `a` for a simulator (`w` opens a w
 (e.g. `http://192.168.1.20:3000/v1`), not `localhost`; the Android emulator uses `10.0.2.2`.
 For the web preview, add `http://localhost:8081` to the API's `CORS_ORIGINS`.
 
-Sign in with the dev login (development builds only): any email signs in or creates that
+Sign in with the dev login (development builds, and the `preview` / `beta` test builds): any email signs in or creates that
 user; a blank email creates a new test user.
 
 ## Scripts
@@ -26,6 +26,7 @@ user; a blank email creates a new test user.
 |---|---|
 | `dev` / `start` | Start the dev server for **Expo Go** |
 | `dev:client` | Start the dev server for a **development build** (needed for push notifications) |
+| `test` | Jest (`jest-expo` + React Native Testing Library); tests live in `__tests__/` next to the code |
 | `lint` | `expo lint` (ESLint, `eslint-config-expo`) |
 | `typecheck` | `tsc --noEmit` |
 
@@ -67,11 +68,49 @@ Push doesn't work in Expo Go, simulators or the web preview; the app skips it th
 Taps open Connections (new request) or the chat (accepted request, new message). While the app is
 open, pushes refresh the data; a message for the chat you're in doesn't show a banner.
 
+## Test builds & distribution (EAS)
+
+Profiles in `eas.json`:
+
+| Profile | Use | Dev login |
+|---|---|---|
+| `development` | Your own debugging and push testing; pairs with `pnpm dev:client` | yes |
+| `preview` | Quick installs from a link: Android APK, iPhones registered with `eas device:create` | yes |
+| `beta` | TestFlight and the Google Play internal testing track | yes |
+| `production` | Public release, after Cognito sign-in replaces the dev login | no |
+
+Before the first `preview` or `beta` build:
+
+1. Do steps 1–3 of the push setup above (`eas init`, Apple key, Firebase).
+2. Host the API somewhere the testers' phones can reach, then point the builds at it:
+   `eas env:create --environment preview --name EXPO_PUBLIC_API_URL --value https://YOUR-API/v1 --visibility plaintext`
+   (`preview` and `beta` both read the `preview` environment.) Without it the app tries `localhost`
+   and shows "Can't reach NearbyPals".
+3. Replace the placeholder app icon and splash in `assets/images/` (still Expo's defaults), and confirm
+   the bundle ID `com.codewaala.nearbypals` — it can't change after the first store upload.
+
+**Quick install link (`preview`):** `eas build --profile preview --platform all`, then share the
+install page link. iPhones must be registered first (`eas device:create`).
+
+**TestFlight (`beta`, iOS):** `eas build --profile beta --platform ios`, then
+`eas submit --profile beta --platform ios`. EAS creates the App Store Connect app if needed. Add testers
+in App Store Connect → TestFlight (internal testers can install right away; external testers need a
+short Beta App Review).
+
+**Play internal testing (`beta`, Android):** create the app in the Play Console, then
+`eas build --profile beta --platform android`. Google requires the **first** upload to be done by hand
+(download the `.aab` from EAS and upload it to Internal testing). After that,
+`eas submit --profile beta --platform android` uploads to the internal track (needs a Google service
+account key, which `eas submit` walks you through). Add testers by email list in the Play Console.
+
+The QA checklist for device testing is in [`docs/mobile_qa_checklist.md`](../../docs/mobile_qa_checklist.md).
+
 ## Notes
 
 - New screens that need sign-in must be declared inside the `Stack.Protected` guard in
   `src/app/_layout.tsx`; Expo Router adds undeclared routes outside it.
 - Run the dev server without `CI=1` while editing: in CI mode Metro doesn't watch files.
+- After changing an `EXPO_PUBLIC_*` value, restart with `--clear`: Metro caches the inlined values.
 
 - pnpm workspace packages resolve in Metro without `node-linker=hoisted` (checked with `expo export` for iOS and Android).
 - Bundle ID / package: `com.codewaala.nearbypals` (placeholder — confirm before the first EAS build).

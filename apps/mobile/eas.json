@@ -6,16 +6,40 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "environment": "development"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_DEV_LOGIN": "true"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "beta": {
+      "distribution": "store",
+      "environment": "preview",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_DEV_LOGIN": "true"
+      }
     },
     "production": {
+      "distribution": "store",
+      "environment": "production",
       "autoIncrement": true
     }
   },
   "submit": {
+    "beta": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    },
     "production": {}
   }
 }

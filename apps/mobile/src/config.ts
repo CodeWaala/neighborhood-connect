@@ -6,5 +6,8 @@
 /** API base URL including `/v1`. On a real phone this must be your computer's LAN IP. */
 export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000/v1';
 
-/** Dev login is only offered in development builds; Cognito sign-in replaces it later. */
-export const DEV_LOGIN_ENABLED = __DEV__;
+/**
+ * Dev login (email only, no password). On in development; test builds (EAS `preview` and `beta`
+ * profiles) turn it on with EXPO_PUBLIC_DEV_LOGIN=true. Cognito sign-in replaces it later.
+ */
+export const DEV_LOGIN_ENABLED = __DEV__ || process.env.EXPO_PUBLIC_DEV_LOGIN === 'true';
