@@ -1,5 +1,8 @@
 import { parsePushData } from '../push';
 
+// push.ts sets the foreground handler on import; the native module isn't available under Jest
+jest.mock('expo-notifications', () => ({ setNotificationHandler: jest.fn() }));
+
 describe('parsePushData', () => {
   it.each(['connection_request', 'connection_accepted', 'message'] as const)('accepts %s', (type) => {
     expect(parsePushData({ type, connectionId: 'c1' })).toEqual({ type, connectionId: 'c1' });

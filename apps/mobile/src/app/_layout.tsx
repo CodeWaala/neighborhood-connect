@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme as NavTheme } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Href, type Theme as NavTheme } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -85,10 +85,12 @@ function RootNavigator() {
   }
 
   const signedIn = status === 'signedIn';
+  // Where a blocked route sends the user (explicit, rather than the navigator's default anchor)
+  const home: Href = !signedIn ? '/welcome' : hasProfile ? '/' : '/onboarding';
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={signedIn && hasProfile}>
+      <Stack.Protected guard={signedIn && hasProfile} redirectTo={home}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="neighbor/[id]" />
         <Stack.Screen name="request-sent" options={{ gestureEnabled: false }} />
@@ -98,10 +100,10 @@ function RootNavigator() {
         <Stack.Screen name="edit/availability" options={{ presentation: 'modal' }} />
         <Stack.Screen name="edit/about" options={{ presentation: 'modal' }} />
       </Stack.Protected>
-      <Stack.Protected guard={signedIn && !hasProfile}>
+      <Stack.Protected guard={signedIn && !hasProfile} redirectTo={home}>
         <Stack.Screen name="onboarding" />
       </Stack.Protected>
-      <Stack.Protected guard={!signedIn}>
+      <Stack.Protected guard={!signedIn} redirectTo={home}>
         <Stack.Screen name="welcome" />
         <Stack.Screen name="sign-in" />
       </Stack.Protected>

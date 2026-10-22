@@ -27,7 +27,7 @@ Ship an iOS + Android app for NearbyPals that covers the full MVP loop (onboard 
 
 | Phase | Status | Notes |
 |---|---|---|
-| M1 | Done | Expo SDK 57; Metro resolves pnpm workspace packages without `node-linker=hoisted`. Bundle ID placeholder `com.codewaala.nearbypals`. |
+| M1 | Done | Expo SDK 57, upgraded to SDK 58; Metro resolves pnpm workspace packages without `node-linker=hoisted`. Bundle ID placeholder `com.codewaala.nearbypals`. |
 | M2 | Done | If the API can't be reached at launch, the session is kept and a retry screen is shown (web signs out instead). |
 | M3 | Done | |
 | M4 | Done | No API change needed: `GET /discovery` already returns each match's full interests and availability, so overlap is computed in the app. |

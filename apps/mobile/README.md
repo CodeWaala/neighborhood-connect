@@ -1,6 +1,6 @@
 # NearbyPals mobile (`@neighborhood-connect/mobile`)
 
-iOS + Android client for the `/v1` API, built with Expo (SDK 57, Expo Router).
+iOS + Android client for the `/v1` API, built with Expo (SDK 58, Expo Router).
 Plan: [`docs/plans/mobile-app-v1.md`](../../docs/plans/mobile-app-v1.md).
 
 ## Run

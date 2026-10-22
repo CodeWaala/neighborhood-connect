@@ -168,7 +168,7 @@ export default function ChatScreen() {
                     {sharedSummary(shared, overlap)}
                   </Text>
                 </View>
-              ) : null
+              ) : undefined
             }
             renderItem={({ item }) => <Bubble message={item} mine={item.senderId === myUserId} />}
           />
